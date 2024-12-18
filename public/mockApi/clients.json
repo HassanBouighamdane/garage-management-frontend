@@ -1,0 +1,43 @@
+[
+    {
+      "cin": "AB123456",
+      "firstName": "John",
+      "lastName": "Doe",
+      "address": "123 Main St, Springfield, IL",
+      "email": "john.doe@example.com",
+      "phone": "+1234567890"
+    },
+    {
+      "cin": "XY987654",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "address": "456 Elm St, Springfield, IL",
+      "email": "jane.smith@example.com",
+      "phone": "+0987654321"
+    },
+    {
+      "cin": "LM456789",
+      "firstName": "Alice",
+      "lastName": "Johnson",
+      "address": "789 Oak St, Springfield, IL",
+      "email": "alice.johnson@example.com",
+      "phone": "+1122334455"
+    },
+    {
+      "cin": "PQ123987",
+      "firstName": "Bob",
+      "lastName": "Brown",
+      "address": "101 Pine St, Springfield, IL",
+      "email": "bob.brown@example.com",
+      "phone": "+5544332211"
+    },
+    {
+      "cin": "QR654321",
+      "firstName": "Charlie",
+      "lastName": "Davis",
+      "address": "202 Birch St, Springfield, IL",
+      "email": "charlie.davis@example.com",
+      "phone": "+6677889900"
+    }
+  ]
+  
