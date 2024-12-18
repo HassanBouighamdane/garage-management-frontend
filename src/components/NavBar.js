@@ -28,27 +28,18 @@ const Navbar = () => {
                         </li>
                         <li className="nav-item">
                             <NavLink className="nav-link" to="/clients">
-                                Clients
+                                Manage Clients
                             </NavLink>
                         </li>
                         <li className="nav-item">
                             <NavLink className="nav-link" to="/vehicles">
-                                Vehicles
+                                Manage Vehicles
                             </NavLink>
                         </li>
-                        <li className="nav-item">
-                            <NavLink className="nav-link" to="/workshops">
-                                Workshops
-                            </NavLink>
-                        </li>
-                        <li className="nav-item">
-                            <NavLink className="nav-link" to="/tasks">
-                                Tasks
-                            </NavLink>
-                        </li>
+                        
                         <li className="nav-item">
                             <NavLink className="nav-link" to="/invoices">
-                                Invoices
+                                Manage Invoices
                             </NavLink>
                         </li>
                     </ul>

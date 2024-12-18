@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getAllClients } from '../api/client';
-import ClientForm from '../components/clients/ClientForm';
-import ClientTable from '../components/clients/ClientTable';
+import { getAllClients } from '../../api/client';
+import ClientForm from '../../components/clients/ClientForm';
+import ClientTable from '../../components/clients/ClientTable';
 import { Box, Button, Typography } from '@mui/material';
 
 const ClientPage = () => {

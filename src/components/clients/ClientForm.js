@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addClient } from "../../api/client";
+import { addClient, updateClient } from "../../api/client";
 import {
     Box,
     Button,
@@ -34,7 +34,7 @@ const ClientForm = ({ onClose, onSave, type, client }) => {
             if (type === "create") {
                 await addClient(formData);
             } else if (type === "update") {
-                // Update client logic here
+                await updateClient(formData);
             }
             onSave();
             onClose();
