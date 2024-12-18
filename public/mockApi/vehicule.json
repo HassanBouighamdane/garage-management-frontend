@@ -1,0 +1,29 @@
+[
+    {
+      "vin": 1,
+      "registrationNumber": "ABC123",
+      "year": 2015,
+      "color": "Red",
+      "mileage": 120000,
+      "purchaseDate": "2015-06-15",
+      "ownerId": "12345",
+      "brand": { "name": "Toyota" },
+      "model": { "name": "Corolla" },
+      "fuelType": "PETROL",
+      "status": "AVAILABLE"
+    },
+    {
+      "vin": 2,
+      "registrationNumber": "XYZ789",
+      "year": 2020,
+      "color": "Blue",
+      "mileage": 30000,
+      "purchaseDate": "2020-03-20",
+      "ownerId": "67890",
+      "brand": { "name": "Honda" },
+      "model": { "name": "Civic" },
+      "fuelType": "DIESEL",
+      "status": "MAINTENANCE"
+    }
+  ]
+  
