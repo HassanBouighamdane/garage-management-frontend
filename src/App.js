@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Invoices from './pages/invoices/InvoicesPage';
 import Header from './components/Header';
 import VehiclesPage from './pages/vehicules/VehiclesPage';
+import WorkshopManagement from './pages/workshops/workshopManagement';
 
 function App() {
   return (
@@ -14,6 +15,8 @@ function App() {
           {/* <Route path="/" element={<HomePage />} /> */}
           <Route path="/vehicles" element={<VehiclesPage />} />
           <Route path="/invoices" element={<Invoices />} />
+
+          <Route path="/workshop" element={<WorkshopManagement />} />        
         </Routes>
       </Router> 
     </div>
