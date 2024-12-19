@@ -13,3 +13,12 @@ export const getAllVehicules = async () => {
 };
 
 
+export const addVehicule=async(vehicule)=>{
+    try {        
+        const response= await axios.post(`${API_URL}/vehicule/`,vehicule);
+        return response.data;
+        
+    } catch (error) {
+        console.log("error creating vehicule"+error);
+    }
+};
