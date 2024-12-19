@@ -1,5 +1,6 @@
 import axios from 'axios'
 const API_URL=process.env.REACT_APP_API_GATEWAY+"/api/v1/vehicules";
+
 export const getAllVehicules = async () => {
     try {
         const response = await axios(`${API_URL}/vehicule/`);
@@ -10,3 +11,5 @@ export const getAllVehicules = async () => {
         return [];  
     }
 };
+
+
