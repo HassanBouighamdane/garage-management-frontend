@@ -28,6 +28,7 @@ const WorkshopsPage = () => {
     description: "",
     startDate: "",
     endDate: "",
+    price: "",
     status: "",
   });
 
@@ -142,6 +143,7 @@ const WorkshopsPage = () => {
                 <TableCell>Description</TableCell>
                 <TableCell>Start Date</TableCell>
                 <TableCell>End Date</TableCell>
+                <TableCell>Price</TableCell>
                 <TableCell>Status</TableCell>
               </TableRow>
             </TableHead>
@@ -154,6 +156,7 @@ const WorkshopsPage = () => {
                   <TableCell>{task.description}</TableCell>
                   <TableCell>{task.startDate}</TableCell>
                   <TableCell>{task.endDate}</TableCell>
+                  <TableCell>{task.price}</TableCell>
                   <TableCell>{task.status}</TableCell>
                 </TableRow>
               ))}
