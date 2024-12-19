@@ -223,6 +223,14 @@ const WorkshopsPage = () => {
             onChange={(e) => setNewTask({ ...newTask, endDate: e.target.value })}
           />
           <TextField
+            label="Price"
+            type="number"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            value={newTask.price}
+            onChange={(e) => setNewTask({ ...newTask, price: e.target.value })}
+          />
+          <TextField
             label="Status"
             fullWidth
             value={newTask.status}
