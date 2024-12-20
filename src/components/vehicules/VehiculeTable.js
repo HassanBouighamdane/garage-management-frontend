@@ -16,8 +16,8 @@ const VehicleTable = ({ vehicles, onVehicleSelect, selectedVehicle }) => {
                 <TableHead>
                     <TableRow>
                         <TableCell></TableCell>
-                        <TableCell>VIN</TableCell>
                         <TableCell>Registration Number</TableCell>
+                        <TableCell>Owner</TableCell>
                         <TableCell>Brand</TableCell>
                         <TableCell>Model</TableCell>
                         <TableCell>Year</TableCell>
@@ -33,15 +33,15 @@ const VehicleTable = ({ vehicles, onVehicleSelect, selectedVehicle }) => {
                             <TableCell>
                                 <Radio
                                     checked={
-                                        selectedVehicle?.vin === vehicle.vin
+                                        selectedVehicle?.registrationNumber === vehicle.vin
                                     }
                                     onChange={() => onVehicleSelect(vehicle)}
                                     value={vehicle.vin}
                                     inputProps={{ 'aria-label': vehicle.vin }}
                                 />
                             </TableCell>
-                            <TableCell>{vehicle.vin}</TableCell>
                             <TableCell>{vehicle.registrationNumber}</TableCell>
+                            <TableCell>{vehicle.ownerId}</TableCell>
                             <TableCell>{vehicle.brand.name}</TableCell>
                             <TableCell>{vehicle.model.name}</TableCell>
                             <TableCell>{vehicle.year}</TableCell>
