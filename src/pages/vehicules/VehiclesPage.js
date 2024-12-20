@@ -16,7 +16,7 @@ const VehiclePage = () => {
 
     const fetchVehicles = async () => {
         try {
-            // Replace this mock data with an API call, e.g., `await getAllVehicles()`
+           
             const fetchedVehicles = await getAllVehicules();
             setVehicles(fetchedVehicles);
         } catch (error) {

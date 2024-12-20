@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Dialog,DialogActions,DialogContent,DialogTitle, MenuItem,IconButton } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { addBrand, addModelToBrand, getAllBrands, getAllModels } from '../../api/brands';
+import { addVehicule } from '../../api/vehicule';
+import { getAllClients } from '../../api/client';
+
 const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
     const [formData, setFormData] = useState({
         vin: '',
@@ -24,7 +28,13 @@ const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
     const [newModelDialog, setNewModelDialog] = useState(false);
     const [newBrand, setNewBrand] = useState('');
     const [newModel, setNewModel] = useState('');
+    const [clients,setClients]=useState([]);
+    
 
+    useEffect(()=>{
+        fetchClients();
+    },[]);
+    
     useEffect(() => {
         if (type === 'update' && vehicle) {
             setFormData(vehicle);
@@ -48,6 +58,15 @@ const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
         fetchStatus();
     },[]);
 
+      const fetchClients = async () => {
+            try {
+                const fetchedClients = await getAllClients();
+                setClients(fetchedClients);
+            } catch (error) {
+                console.error('Error fetching clients:', error);
+            }
+        };
+
     const fetchStatus=async()=>{
         const statusData=[
             {id:'1',name: 'FUNCTIONAL'},
@@ -59,12 +78,7 @@ const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
     }
 
     const fetchBrands = async () => {
-        // Replace with API call or static data
-        const brandsData = [
-            { id: '1', name: 'Toyota' },
-            { id: '2', name: 'Ford' },
-            { id: '3', name: 'BMW' },
-        ];
+        const brandsData = await getAllBrands();
         setBrands(brandsData);
     };
 
@@ -79,22 +93,8 @@ const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
     };
 
     const fetchModels = async (brandId) => {
-        // Replace with API call or static data
-        const modelsData = {
-            '1': [
-                { id: '1-1', name: 'Corolla' },
-                { id: '1-2', name: 'Camry' },
-            ],
-            '2': [
-                { id: '2-1', name: 'F-150' },
-                { id: '2-2', name: 'Mustang' },
-            ],
-            '3': [
-                { id: '3-1', name: 'X5' },
-                { id: '3-2', name: 'M3' },
-            ],
-        };
-        setModels(modelsData[brandId] || []);
+        const modelsData = await getAllModels(brandId);
+        setModels(modelsData || []);
     };
 
     const handleInputChange = (e) => {
@@ -105,26 +105,28 @@ const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form data submitted:', formData);
+        console.log(formData);
+        await addVehicule(formData);
         onSave();
         onClose();
     };
 
-    const addNewBrand = () => {
+    const addNewBrand = async() => {
         if (newBrand) {
-            setBrands((prev) => [...prev, { id: `${prev.length + 1}`, name: newBrand }]);
+            await addBrand({name:newBrand})
             setNewBrand('');
             setNewBrandDialog(false);
         }
     };
 
-    const addNewModel = () => {
+    const addNewModel = async() => {
         if (newModel) {
-            setModels((prev) => [...prev, { id: `${prev.length + 1}`, name: newModel }]);
+            await addModelToBrand(formData.brand,{name:newModel})
             setNewModel('');
             setNewModelDialog(false);
+            await fetchModels(formData.brand);
         }
     };
 
@@ -157,6 +159,31 @@ const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
                 onChange={handleInputChange}
                 sx={{ mb: 2 }}
             />
+
+        <TextField
+                fullWidth
+                select
+                label="Owner"
+                name="ownerId"
+                value={formData.ownerId}
+                onChange={handleInputChange}
+                sx={{ mb: 2 }}
+            >
+                {clients.map((client) => (
+                            <MenuItem key={client.cin} value={client.cin}>
+                                {client.firstName+' '+client.lastName}
+                            </MenuItem>
+                        ))}
+            </TextField>
+            <TextField
+                fullWidth
+                type='date'
+                label="purchase Date"
+                name="purchaseDate"
+                value={formData.purchaseDate}
+                onChange={handleInputChange}
+                sx={{ mb: 2 }}
+            />
             <TextField
                 fullWidth
                 label="Mileage"
@@ -182,7 +209,7 @@ const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
                         }}
                     >
                         {brands.map((brand) => (
-                            <MenuItem key={brand.id} value={brand.id}>
+                            <MenuItem key={brand.id} value={brand.name}>
                                 {brand.name}
                             </MenuItem>
                         ))}
@@ -205,7 +232,7 @@ const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
                         }}
                     >
                         {models.map((model) => (
-                            <MenuItem key={model.id} value={model.id}>
+                            <MenuItem key={model.id} value={model.name}>
                                 {model.name}
                             </MenuItem>
                         ))}
@@ -220,7 +247,7 @@ const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
                 sx={{ mb: 2 }}
             >
                 {fuelType.map((type)=>(
-                    <MenuItem key={type.id} value={type.id}>
+                    <MenuItem key={type.id} value={type.name}>
                         {type.name}
                     </MenuItem>
                 ))}
@@ -235,7 +262,7 @@ const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
                 sx={{ mb: 2 }}
             >
                 {status.map((stat)=>(
-                    <MenuItem key={stat.id} value={stat.id}>
+                    <MenuItem key={stat.id} value={stat.name}>
                         {stat.name}
                     </MenuItem>
                 ))}
