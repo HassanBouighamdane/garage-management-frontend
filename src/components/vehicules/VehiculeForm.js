@@ -118,6 +118,7 @@ const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
             await addBrand({name:newBrand})
             setNewBrand('');
             setNewBrandDialog(false);
+            await fetchBrands();
         }
     };
 
