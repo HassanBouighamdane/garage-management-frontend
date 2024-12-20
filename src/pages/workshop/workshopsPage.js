@@ -12,6 +12,10 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 
 const WorkshopsPage = () => {
@@ -19,11 +23,19 @@ const WorkshopsPage = () => {
   const [vehicles, setVehicles] = useState([]);
   const [selectedWorkshop, setSelectedWorkshop] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [openTaskModal, setOpenTaskModal] = useState(false);
   const [openWorkshopModal, setOpenWorkshopModal] = useState(false);
   const [openInvoiceModal, setOpenInvoiceModal] = useState(false);
   const [newWorkshop, setNewWorkshop] = useState({ date: "" });
+  const [newTask, setNewTask] = useState({
+    name: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    vin: "",
+  });
   const [invoice, setInvoice] = useState({
-    clientId: "",
+    vehicleVin: "",
     taskId: "",
     amount: "",
     dateIssued: "",
@@ -38,7 +50,7 @@ const WorkshopsPage = () => {
 
   const fetchWorkshops = async () => {
     try {
-      const response = await axios.get("http://localhost:8083/api/v1/workshop/");
+      const response = await axios.get("http://localhost:8080/api/v1/workshop/");
       setWorkshops(response.data);
     } catch (error) {
       console.error("Error fetching workshops:", error);
@@ -47,7 +59,7 @@ const WorkshopsPage = () => {
 
   const fetchVehicles = async () => {
     try {
-      const response = await axios.get("http://localhost:8082/api/v1/vehicules/vehicule/");
+      const response = await axios.get("http://localhost:8080/api/v1/vehicules/vehicule/");
       setVehicles(response.data);
     } catch (error) {
       console.error("Error fetching vehicles:", error);
@@ -56,7 +68,7 @@ const WorkshopsPage = () => {
 
   const handleSelectWorkshop = async (workshopId) => {
     try {
-      const response = await axios.get(`http://localhost:8083/api/v1/workshop/${workshopId}/tasks`);
+      const response = await axios.get(`http://localhost:8080/api/v1/workshop/${workshopId}/tasks`);
       setSelectedWorkshop(workshopId);
       setTasks(response.data);
     } catch (error) {
@@ -66,7 +78,7 @@ const WorkshopsPage = () => {
 
   const handleAddWorkshop = async () => {
     try {
-      await axios.post("http://localhost:8083/api/v1/workshop", newWorkshop);
+      await axios.post("http://localhost:8080/api/v1/workshop/", newWorkshop);
       setOpenWorkshopModal(false);
       setNewWorkshop({ date: "" });
       fetchWorkshops();
@@ -77,7 +89,7 @@ const WorkshopsPage = () => {
 
   const handleDeleteWorkshop = async (workshopId) => {
     try {
-      await axios.delete(`http://localhost:8083/api/v1/workshop/${workshopId}`);
+      await axios.delete(`http://localhost:8080/api/v1/workshop/${workshopId}`);
       fetchWorkshops();
       setSelectedWorkshop(null); // Reset selected workshop
       setTasks([]);
@@ -86,12 +98,23 @@ const WorkshopsPage = () => {
     }
   };
 
+  const handleAddTask = async () => {
+    try {
+      await axios.post(`http://localhost:8080/api/v1/workshop/${selectedWorkshop}/tasks`, newTask);
+      setOpenTaskModal(false);
+      setNewTask({ name: "", description: "", startDate: "", endDate: "", vin: "" });
+      handleSelectWorkshop(selectedWorkshop);
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
+  };
+
   const handleMarkAsCompleted = async (task) => {
     try {
       const updatedTask = { ...task, status: "Completed" };
-      await axios.put(`http://localhost:8083/api/v1/tasks/${task.id}`, updatedTask);
+      await axios.put(`http://localhost:8080/api/v1/workshop/${selectedWorkshop}/tasks`, updatedTask);
       setSelectedTask(updatedTask);
-      setInvoice({ ...invoice, taskId: task.id, clientId: task.clientId });
+      setInvoice({ ...invoice, taskId: task.id, vehicleVin: task.vin });
       setOpenInvoiceModal(true);
       handleSelectWorkshop(selectedWorkshop); // Refresh task list
     } catch (error) {
@@ -101,9 +124,11 @@ const WorkshopsPage = () => {
 
   const handleSendInvoice = async () => {
     try {
-      await axios.post("http://localhost:8083/api/v1/invoices", invoice);
+      console.log(invoice);
+      await axios.post("http://localhost:8085/api/v1/invoices", invoice);
+
       setOpenInvoiceModal(false);
-      setInvoice({ clientId: "", taskId: "", amount: "", dateIssued: "", status: "Pending" });
+      setInvoice({ vehicleVin: "", taskId: "", amount: "", dateIssued: "", status: "Pending" });
       handleSelectWorkshop(selectedWorkshop);
     } catch (error) {
       console.error("Error sending invoice:", error);
@@ -154,6 +179,9 @@ const WorkshopsPage = () => {
       {selectedWorkshop && (
         <div>
           <h2>Tasks for Workshop {selectedWorkshop}</h2>
+          <Button variant="contained" onClick={() => setOpenTaskModal(true)}>
+            Add Task
+          </Button>
           <Table>
             <TableHead>
               <TableRow>
@@ -162,6 +190,7 @@ const WorkshopsPage = () => {
                 <TableCell>Description</TableCell>
                 <TableCell>Start Date</TableCell>
                 <TableCell>End Date</TableCell>
+                <TableCell>VIN</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
@@ -174,6 +203,7 @@ const WorkshopsPage = () => {
                   <TableCell>{task.description}</TableCell>
                   <TableCell>{task.startDate}</TableCell>
                   <TableCell>{task.endDate}</TableCell>
+                  <TableCell>{task.vin}</TableCell>
                   <TableCell>{task.status}</TableCell>
                   <TableCell>
                     <Button
@@ -192,6 +222,8 @@ const WorkshopsPage = () => {
         </div>
       )}
 
+      
+
       {/* Add Workshop Modal */}
       <Dialog open={openWorkshopModal} onClose={() => setOpenWorkshopModal(false)}>
         <DialogTitle>Add Workshop</DialogTitle>
@@ -208,6 +240,58 @@ const WorkshopsPage = () => {
         <DialogActions>
           <Button onClick={() => setOpenWorkshopModal(false)}>Cancel</Button>
           <Button onClick={handleAddWorkshop}>Add Workshop</Button>
+        </DialogActions>
+      </Dialog>
+
+       {/* Add Task Modal */}
+       <Dialog open={openTaskModal} onClose={() => setOpenTaskModal(false)}>
+        <DialogTitle>Add Task</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Name"
+            fullWidth
+            value={newTask.name}
+            onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
+          />
+          <TextField
+            label="Description"
+            fullWidth
+            value={newTask.description}
+            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+          />
+          <TextField
+            label="Start Date"
+            type="date"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            value={newTask.startDate}
+            onChange={(e) => setNewTask({ ...newTask, startDate: e.target.value })}
+          />
+          <TextField
+            label="End Date"
+            type="date"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            value={newTask.endDate}
+            onChange={(e) => setNewTask({ ...newTask, endDate: e.target.value })}
+          />
+          <FormControl fullWidth>
+            <InputLabel>VIN</InputLabel>
+            <Select
+              value={newTask.vin}
+              onChange={(e) => setNewTask({ ...newTask, vin: e.target.value })}
+            >
+              {vehicles.map((vehicle) => (
+                <MenuItem key={vehicle.id} value={vehicle.vin}>
+                  {vehicle.vin}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenTaskModal(false)}>Cancel</Button>
+          <Button onClick={handleAddTask}>Add Task</Button>
         </DialogActions>
       </Dialog>
 
