@@ -3,6 +3,8 @@ import { Box, Button, TextField, Dialog,DialogActions,DialogContent,DialogTitle,
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { addBrand, addModelToBrand, getAllBrands, getAllModels } from '../../api/brands';
 import { addVehicule } from '../../api/vehicule';
+import { getAllClients } from '../../api/client';
+
 const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
     const [formData, setFormData] = useState({
         vin: '',
@@ -26,8 +28,13 @@ const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
     const [newModelDialog, setNewModelDialog] = useState(false);
     const [newBrand, setNewBrand] = useState('');
     const [newModel, setNewModel] = useState('');
+    const [clients,setClients]=useState([]);
     
 
+    useEffect(()=>{
+        fetchClients();
+    },[]);
+    
     useEffect(() => {
         if (type === 'update' && vehicle) {
             setFormData(vehicle);
@@ -50,6 +57,15 @@ const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
         fetchFuelTypes();
         fetchStatus();
     },[]);
+
+      const fetchClients = async () => {
+            try {
+                const fetchedClients = await getAllClients();
+                setClients(fetchedClients);
+            } catch (error) {
+                console.error('Error fetching clients:', error);
+            }
+        };
 
     const fetchStatus=async()=>{
         const statusData=[
@@ -91,6 +107,7 @@ const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(formData);
         await addVehicule(formData);
         onSave();
         onClose();
@@ -145,12 +162,19 @@ const VehicleForm = ({ onClose, onSave, type, vehicle }) => {
 
         <TextField
                 fullWidth
+                select
                 label="Owner"
                 name="ownerId"
                 value={formData.ownerId}
                 onChange={handleInputChange}
                 sx={{ mb: 2 }}
-            />
+            >
+                {clients.map((client) => (
+                            <MenuItem key={client.cin} value={client.cin}>
+                                {client.firstName+' '+client.lastName}
+                            </MenuItem>
+                        ))}
+            </TextField>
             <TextField
                 fullWidth
                 type='date'
