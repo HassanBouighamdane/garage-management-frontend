@@ -12,16 +12,28 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 
 const WorkshopsPage = () => {
   const [workshops, setWorkshops] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [selectedWorkshop, setSelectedWorkshop] = useState(null);
-  const [tasks, setTasks] = useState([]);
   const [openWorkshopModal, setOpenWorkshopModal] = useState(false);
+  const [openTaskModal, setOpenTaskModal] = useState(false);
   const [openInvoiceModal, setOpenInvoiceModal] = useState(false);
   const [newWorkshop, setNewWorkshop] = useState({ date: "" });
+  const [newTask, setNewTask] = useState({
+    name: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    vin: "",
+  });
   const [invoice, setInvoice] = useState({
     clientId: "",
     taskId: "",
@@ -29,7 +41,6 @@ const WorkshopsPage = () => {
     dateIssued: "",
     status: "Pending",
   });
-  const [selectedTask, setSelectedTask] = useState(null);
 
   useEffect(() => {
     fetchWorkshops();
@@ -75,11 +86,22 @@ const WorkshopsPage = () => {
     }
   };
 
+  const handleAddTask = async () => {
+    try {
+      await axios.post(`http://localhost:8083/api/v1/workshop/${selectedWorkshop}/tasks`, newTask);
+      setOpenTaskModal(false);
+      setNewTask({ name: "", description: "", startDate: "", endDate: "", vin: "" });
+      handleSelectWorkshop(selectedWorkshop);
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
+  };
+
   const handleDeleteWorkshop = async (workshopId) => {
     try {
       await axios.delete(`http://localhost:8083/api/v1/workshop/${workshopId}`);
       fetchWorkshops();
-      setSelectedWorkshop(null); // Reset selected workshop
+      setSelectedWorkshop(null);
       setTasks([]);
     } catch (error) {
       console.error("Error deleting workshop:", error);
@@ -90,10 +112,9 @@ const WorkshopsPage = () => {
     try {
       const updatedTask = { ...task, status: "Completed" };
       await axios.put(`http://localhost:8083/api/v1/tasks/${task.id}`, updatedTask);
-      setSelectedTask(updatedTask);
       setInvoice({ ...invoice, taskId: task.id, clientId: task.clientId });
       setOpenInvoiceModal(true);
-      handleSelectWorkshop(selectedWorkshop); // Refresh task list
+      handleSelectWorkshop(selectedWorkshop);
     } catch (error) {
       console.error("Error marking task as completed:", error);
     }
@@ -154,6 +175,9 @@ const WorkshopsPage = () => {
       {selectedWorkshop && (
         <div>
           <h2>Tasks for Workshop {selectedWorkshop}</h2>
+          <Button variant="contained" onClick={() => setOpenTaskModal(true)}>
+            Add Task
+          </Button>
           <Table>
             <TableHead>
               <TableRow>
@@ -162,6 +186,7 @@ const WorkshopsPage = () => {
                 <TableCell>Description</TableCell>
                 <TableCell>Start Date</TableCell>
                 <TableCell>End Date</TableCell>
+                <TableCell>VIN</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
@@ -174,6 +199,7 @@ const WorkshopsPage = () => {
                   <TableCell>{task.description}</TableCell>
                   <TableCell>{task.startDate}</TableCell>
                   <TableCell>{task.endDate}</TableCell>
+                  <TableCell>{task.vin}</TableCell>
                   <TableCell>{task.status}</TableCell>
                   <TableCell>
                     <Button
@@ -211,10 +237,68 @@ const WorkshopsPage = () => {
         </DialogActions>
       </Dialog>
 
+      {/* Add Task Modal */}
+      <Dialog open={openTaskModal} onClose={() => setOpenTaskModal(false)}>
+        <DialogTitle>Add Task</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Name"
+            fullWidth
+            value={newTask.name}
+            onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
+          />
+          <TextField
+            label="Description"
+            fullWidth
+            value={newTask.description}
+            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+          />
+          <TextField
+            label="Start Date"
+            type="date"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            value={newTask.startDate}
+            onChange={(e) => setNewTask({ ...newTask, startDate: e.target.value })}
+          />
+          <TextField
+            label="End Date"
+            type="date"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            value={newTask.endDate}
+            onChange={(e) => setNewTask({ ...newTask, endDate: e.target.value })}
+          />
+          <FormControl fullWidth>
+            <InputLabel>VIN</InputLabel>
+            <Select
+              value={newTask.vin}
+              onChange={(e) => setNewTask({ ...newTask, vin: e.target.value })}
+            >
+              {vehicles.map((vehicle) => (
+                <MenuItem key={vehicle.id} value={vehicle.vin}>
+                  {vehicle.vin}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenTaskModal(false)}>Cancel</Button>
+          <Button onClick={handleAddTask}>Add Task</Button>
+        </DialogActions>
+      </Dialog>
+
       {/* Invoice Modal */}
       <Dialog open={openInvoiceModal} onClose={() => setOpenInvoiceModal(false)}>
         <DialogTitle>Send Invoice</DialogTitle>
         <DialogContent>
+          <TextField
+            label="Client ID"
+            fullWidth
+            value={invoice.clientId}
+            onChange={(e) => setInvoice({ ...invoice, clientId: e.target.value })}
+          />
           <TextField
             label="Amount"
             fullWidth
