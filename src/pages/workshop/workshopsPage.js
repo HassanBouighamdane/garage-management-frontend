@@ -125,7 +125,7 @@ const WorkshopsPage = () => {
   const handleSendInvoice = async () => {
     try {
       console.log(invoice);
-      await axios.post("http://localhost:8085/api/v1/invoices", invoice);
+      await axios.post("http://localhost:8080/api/v1/invoices", invoice);
 
       setOpenInvoiceModal(false);
       setInvoice({ vehicleVin: "", taskId: "", amount: "", dateIssued: "", status: "Pending" });
@@ -307,7 +307,7 @@ const WorkshopsPage = () => {
           />
           <TextField
             label="Date Issued"
-            type="date"
+            type="time"
             fullWidth
             InputLabelProps={{ shrink: true }}
             value={invoice.dateIssued}
