@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchInvoices } from '../../api/api';
+import { getInvoices } from '../../api/invoices';
 
 import { Box, Typography, Paper, List, ListItem, ListItemText } from '@mui/material';
 
@@ -8,7 +8,8 @@ const InvoiceList = () => {
 
   const loadInvoices = async () => {
     try {
-      const response = await fetchInvoices();
+      const response = await getInvoices();
+      console.log(response)
       setInvoices(response.data);
     } catch (error) {
       console.error('Error fetching invoices:', error);
@@ -29,12 +30,12 @@ const InvoiceList = () => {
           {invoices.map((invoice, index) => (
             <ListItem key={index} divider>
               <ListItemText
-                primary={`To: ${invoice.clientEmail}`}
+                primary={`To: ${invoice.vehicleVin}`}
                 secondary={
                   <>
-                    <strong>Subject:</strong> {invoice.subject}
+                    <strong>Invoice :</strong> {invoice.amount}
                     <br />
-                    <strong>Message:</strong> {invoice.message}
+                    
                   </>
                 }
               />
