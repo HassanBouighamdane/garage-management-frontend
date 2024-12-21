@@ -13,7 +13,7 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
-
+const API_URL=process.env.REACT_APP_API_GATEWAY;
 const WorkshopsPage = () => {
   const [workshops, setWorkshops] = useState([]);
   const [vehicles, setVehicles] = useState([]);
@@ -38,7 +38,7 @@ const WorkshopsPage = () => {
 
   const fetchWorkshops = async () => {
     try {
-      const response = await axios.get("http://localhost:8083/api/v1/workshop/");
+      const response = await axios.get(API_URL+"/api/v1/workshop/");
       setWorkshops(response.data);
     } catch (error) {
       console.error("Error fetching workshops:", error);
@@ -47,7 +47,7 @@ const WorkshopsPage = () => {
 
   const fetchVehicles = async () => {
     try {
-      const response = await axios.get("http://localhost:8082/api/v1/vehicules/vehicule/");
+      const response = await axios.get(API_URL+"/api/v1/vehicules/vehicule/");
       setVehicles(response.data);
     } catch (error) {
       console.error("Error fetching vehicles:", error);
@@ -56,7 +56,7 @@ const WorkshopsPage = () => {
 
   const handleSelectWorkshop = async (workshopId) => {
     try {
-      const response = await axios.get(`http://localhost:8083/api/v1/workshop/${workshopId}/tasks`);
+      const response = await axios.get(`${API_URL}/api/v1/workshop/${workshopId}/tasks`);
       setSelectedWorkshop(workshopId);
       setTasks(response.data);
     } catch (error) {
@@ -66,7 +66,7 @@ const WorkshopsPage = () => {
 
   const handleAddWorkshop = async () => {
     try {
-      await axios.post("http://localhost:8083/api/v1/workshop", newWorkshop);
+      await axios.post(API_URL+"/api/v1/workshop", newWorkshop);
       setOpenWorkshopModal(false);
       setNewWorkshop({ date: "" });
       fetchWorkshops();
@@ -77,7 +77,7 @@ const WorkshopsPage = () => {
 
   const handleDeleteWorkshop = async (workshopId) => {
     try {
-      await axios.delete(`http://localhost:8083/api/v1/workshop/${workshopId}`);
+      await axios.delete(`${API_URL}/api/v1/workshop/${workshopId}`);
       fetchWorkshops();
       setSelectedWorkshop(null); // Reset selected workshop
       setTasks([]);
@@ -89,7 +89,7 @@ const WorkshopsPage = () => {
   const handleMarkAsCompleted = async (task) => {
     try {
       const updatedTask = { ...task, status: "Completed" };
-      await axios.put(`http://localhost:8083/api/v1/tasks/${task.id}`, updatedTask);
+      await axios.put(`${API_URL}/api/v1/tasks/${task.id}`, updatedTask);
       setSelectedTask(updatedTask);
       setInvoice({ ...invoice, taskId: task.id, clientId: task.clientId });
       setOpenInvoiceModal(true);
@@ -101,7 +101,7 @@ const WorkshopsPage = () => {
 
   const handleSendInvoice = async () => {
     try {
-      await axios.post("http://localhost:8083/api/v1/invoices", invoice);
+      await axios.post(API_URL+"/api/v1/invoices", invoice);
       setOpenInvoiceModal(false);
       setInvoice({ clientId: "", taskId: "", amount: "", dateIssued: "", status: "Pending" });
       handleSelectWorkshop(selectedWorkshop);
