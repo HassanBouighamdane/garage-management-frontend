@@ -39,7 +39,7 @@ const WorkshopsPage = () => {
     taskId: "",
     amount: "",
     dateIssued: "",
-    status: "Pending",
+    status: "Scheduled",
   });
   const [selectedTask, setSelectedTask] = useState(null);
 
@@ -112,7 +112,7 @@ const WorkshopsPage = () => {
   const handleMarkAsCompleted = async (task) => {
     try {
       const updatedTask = { ...task, status: "Completed" };
-      await axios.put(`${API_URL}/api/v1/tasks/${task.id}`, updatedTask);
+      await axios.put(`${API_URL}/api/v1/workshop/${selectedWorkshop}/tasks`, updatedTask);
       setSelectedTask(updatedTask);
       setInvoice({ ...invoice, taskId: task.id, vehicleVin: task.vin });
       setOpenInvoiceModal(true);
