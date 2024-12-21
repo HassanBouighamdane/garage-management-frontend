@@ -186,8 +186,8 @@ const WorkshopsPage = () => {
                 <TableCell>ID</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Description</TableCell>
-                <TableCell>Start Date</TableCell>
-                <TableCell>End Date</TableCell>
+                <TableCell>Start Time</TableCell>
+                <TableCell>End Time</TableCell>
                 <TableCell>VIN</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Actions</TableCell>
@@ -258,16 +258,16 @@ const WorkshopsPage = () => {
             onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
           />
           <TextField
-            label="Start Date"
-            type="date"
+            label="Start Time"
+            type="time"
             fullWidth
             InputLabelProps={{ shrink: true }}
             value={newTask.startDate}
             onChange={(e) => setNewTask({ ...newTask, startDate: e.target.value })}
           />
           <TextField
-            label="End Date"
-            type="date"
+            label="End Time"
+            type="time"
             fullWidth
             InputLabelProps={{ shrink: true }}
             value={newTask.endDate}
@@ -305,7 +305,7 @@ const WorkshopsPage = () => {
           />
           <TextField
             label="Date Issued"
-            type="time"
+            type="date"
             fullWidth
             InputLabelProps={{ shrink: true }}
             value={invoice.dateIssued}
