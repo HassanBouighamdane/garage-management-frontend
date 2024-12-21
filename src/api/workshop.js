@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8083/api/v1';
+const API_URL = process.env.REACT_APP_API_GATEWAY+'/api/v1';
 
 // Workshops API
 export const getWorkshops = () => {
